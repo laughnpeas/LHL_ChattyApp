@@ -4,7 +4,9 @@
   "description": "Simple and lightweight Boilerplate for ReactJS projects",
   "scripts": {
     "lint": "eslint src",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha",
+    "compile-sass": "./node_modules/node-sass/bin/node-sass --watch --recursive --output public/styles styles"
   },
   "repository": {
     "type": "git",
@@ -45,6 +47,9 @@
     "webpack-dev-server": "1.14.1"
   },
   "dependencies": {
+    "json-loader": "^0.5.4",
+    "mocha": "^3.3.0",
+    "node-uuid": "^1.4.8",
     "react": "15.2.1",
     "react-dom": "15.2.1"
   }
