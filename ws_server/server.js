@@ -48,5 +48,3 @@ const sendMessageToClient = (client) => {
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   client.on('close', () => { broadcast(JSON.stringify(countClients())); });
 }
-
-wss.on('connection', sendMessageToClient);
