@@ -5,59 +5,47 @@ class ChatBar extends Component{
     super(props);
 
     this.state = {
-      type: '',
-      username: '',
-      content: '',
-      notification: '',
-      error: ''
+      user: props.currentUser.name,
+      content: ''
     };
 
     this.onMessage = this.onMessage.bind(this);
     this.onUserName = this.onUserName.bind(this);
   }
 
-  onMessage(event){
+  setNewContent(event){
+    this.setState({content: event.target.value})
+  }
+  
+  sendNewMessage(event){
     if(event.key === 'Enter'){
-      const content = event.target.value;
-      const length = content.length;
-      const new_name = this.state.username;
-      const cur_name = this.props.username;
-      let type = '';
-      let notification = '';
-
-      const state = {
-        error: ''
-      };
-      if(length === 0) {
-        state.error = `You cannot post an empty message.`;
-      }else{
-        console.log(cur_name === new_name);
-        if(cur_name !== new_name){
-          type = 'postNotification';
-          notification = cur_name+' changed user name to '+ new_name;
-          this.setState.username = new_name;
-        }else{
-          type = 'postMessage';
-        } 
-        console.log(type);
-        const newMessage = {type: type, username: new_name, content: content, notification: notification};
-        this.setState(newMessage);
-        this.props.onNewMessage(this.state);
-      }
+      this.props.sendNewMessage(this.state.content);
+      this.setState({content: ''});
     }
   }
 
-  onUserName(event) {
-    this.setState({
-      username: event.target.value
-    });
+  setUserName(event){
+    this.setState({user: event.target.value});
   }
+
+  sendUserName(event){
+    this.props.sendUserName(this.state.user);
+    event.target.value = '';
+  }
+
 
   render(){
     return(
       <footer className="chatbar">
-        <input className="chatbar-username" ref="username" placeholder="Your Name (Optional)" defaultValue={this.state.username} onKeyUp={this.onUserName}/>
-        <input className="chatbar-message" ref="content" placeholder="Type a message and hit ENTER" onKeyDown={this.onMessage}/>
+        <input className="chatbar-username" 
+               placeholder={this.props.currentUser.name} 
+               onKeyUp={this.setUserName}
+               onBlur={this.sendUserName}/>
+        <input className="chatbar-message" 
+               ref="content" 
+               placeholder="Type a message and hit ENTER" 
+               onKeyDown={this.sendNewMessage}
+               value={this.state.content}/>
       </footer>
     )
   }

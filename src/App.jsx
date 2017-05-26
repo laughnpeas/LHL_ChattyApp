@@ -10,45 +10,66 @@ class App extends Component{
 
     //Set the initial state
     this.state = {
-        currentUser: {}, // optional. if currentUser is not defined, it means the user is Anonymous
+        currentUser: {name: 'Sean'}, // optional. if currentUser is not defined, it means the user is Anonymous
         messages: [],
-        client_no: ''
+        client_no: '',
+        color:''
     }
-    this.onNewMessage = this.onNewMessage.bind(this);
   }
 
   componentDidMount(){
     this.socket = new WebSocket('ws://localhost:3001');
-    this.socket.onopen = (event) => {
-      console.log('connection has made');
-    }
+    this.socket.opopen = this.sendUserName;
+    this.socket.onMessage = this.sendNewMessage;
+  }
 
-    this.socket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log(message);
-      if(message.type){
-        this.setState({client_no: message.client_no});
-      }else{
-        const messages = this.state.messages.concat(message);
-        this.setState({currentUser: message.username, messages: messages}); 
-      }
+  updateMessage = (message) => {
+    const newMessage = JSON.parse(message.content);
+    if(newMessage.type === 'systemMessage'){
+      this.setState({count: newMessage.count})
+    }else{
+      this.setState({messages: this.state.messages.concat(newMessage)})
     }
   }
 
-  onNewMessage(data){
-    this.socket.send(JSON.stringify(data));
-    this.setState({username: data.username});
+  sendJoinMessage =() => {
+    const newMessage = {
+      type: 'postNotification',
+      user: this.state.currentUser.name,
+      content: `${this.state.currentUser.name} has joined`
+    };
+    this.socket.send(JSON.stringify(newMessage));
+  }
+
+  sendNewMessage = (content) => {
+    const newMessage = {
+      type: 'postMessage',
+      user: this.state.currentUser.name,
+      content: content
+    };
+    this.socket.send(JSON,stringify(newMessage));
+  }
+
+  sendUserName = (name) => {
+    const content = `${this.state.currentUser.name} has changed their name to ${username}.`;
+    const newMessage = {
+      type: 'postNotification',
+      content: content
+    };
+    this.socket.send(JSON.stringify(newMessage));
+    this.setState({currentUser: {name: name}});
   }
 
   render(){
     return(
       <div>
-        <Header client_no= {this.state.client_no}/>
+        <Header client_no= {this.state.count}/>
         <MessageList messages= {this.state.messages}/>
-        <ChatBar  username={this.state.currentUser} onNewMessage={this.onNewMessage} onMessage={this.onMessage}/>
+        <ChatBar  currentUser={this.state.currentUser} 
+                  onNewMessage={this.onNewMessage} 
+                  onSendUser={this.onSendUserName}/>
       </div>
     )
   }
 }
 
-export default App;
