@@ -6,7 +6,7 @@ class Header extends Component{
       <header>
         <section className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
-          <h3 className="client-no">{this.props.client_no} client has connected</h3>
+          <h3 className="client-no">{this.props.count} client has connected</h3>
         </section>
       </header>
     )
